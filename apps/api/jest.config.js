@@ -4,5 +4,6 @@ module.exports = {
   testEnvironment: 'node',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^uuid$': require.resolve('uuid'),
   },
 };

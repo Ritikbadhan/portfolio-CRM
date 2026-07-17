@@ -7,7 +7,7 @@ import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 // @ts-expect-error: xss-clean does not have type definitions
 import xss from 'xss-clean';
-import { v4 as uuidv4 } from 'uuid';
+import crypto from 'crypto';
 import { errorHandler, notFoundHandler } from './middlewares/errorHandler';
 import healthRoutes from './routes/v1/health.route';
 
@@ -15,7 +15,7 @@ const app = express();
 
 // Request ID middleware
 app.use((req, res, next) => {
-  req.id = uuidv4();
+  req.id = crypto.randomUUID();
   next();
 });
 
@@ -43,8 +43,11 @@ app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser());
 
+import authRoutes from './routes/v1/auth.route';
+
 // Routes
 app.use('/api/v1/health', healthRoutes);
+app.use('/api/v1/auth', authRoutes);
 
 // Catch 404
 app.use('*', notFoundHandler);
