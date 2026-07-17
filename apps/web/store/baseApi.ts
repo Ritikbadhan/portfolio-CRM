@@ -38,5 +38,6 @@ const axiosBaseQuery =
 export const baseApi = createApi({
   reducerPath: 'api',
   baseQuery: axiosBaseQuery(),
+  tagTypes: ['Settings', 'User', 'Auth'],
   endpoints: () => ({}), // Endpoints will be injected here
 });

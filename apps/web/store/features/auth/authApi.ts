@@ -121,6 +121,28 @@ export const authApi = createApi({
         }
       },
     }),
+    updateProfile: builder.mutation({
+      query: (data) => ({
+        url: '/auth/updatedetails',
+        method: 'PUT',
+        body: data,
+      }),
+      async onQueryStarted(args, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(setCredentials({ user: data.data }));
+        } catch (error) {
+          // Handled at component level
+        }
+      },
+    }),
+    changePassword: builder.mutation({
+      query: (data) => ({
+        url: '/auth/updatepassword',
+        method: 'PUT',
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -131,4 +153,6 @@ export const {
   useGetMeQuery,
   useForgotPasswordMutation,
   useResetPasswordMutation,
+  useUpdateProfileMutation,
+  useChangePasswordMutation,
 } = authApi;
