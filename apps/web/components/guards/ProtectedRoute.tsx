@@ -1,23 +1,39 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import LoadingComponent from '../ui/LoadingComponent';
+import { useSelector } from 'react-redux';
+import { useRouter, usePathname } from 'next/navigation';
+import { useEffect } from 'react';
+import { RootState } from '../../store';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const pathname = usePathname();
+  const { isAuthenticated, isInitialized } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
-    // Placeholder authentication logic
-    const hasToken = true; // localStorage.getItem('token')
-    if (!hasToken) {
-      router.push('/login');
-    } else {
-      setIsAuthenticated(true);
+    if (isInitialized && !isAuthenticated) {
+      // Redirect to login, optionally passing the return url
+      router.push(`/login?returnUrl=${encodeURIComponent(pathname)}`);
     }
-  }, [router]);
+  }, [isInitialized, isAuthenticated, router, pathname]);
 
-  if (!isAuthenticated) return <LoadingComponent />;
+  if (!isInitialized || !isAuthenticated) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          height: '100vh',
+          width: '100%',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <CircularProgress color="primary" />
+      </Box>
+    );
+  }
+
   return <>{children}</>;
 }

@@ -1,34 +1,59 @@
 'use client';
 
-import { ThemeProvider as MUIThemeProvider, CssBaseline } from '@mui/material';
-import { useMemo, useState, createContext, useContext } from 'react';
-import { lightTheme } from '../theme/lightTheme';
-import { darkTheme } from '../theme/darkTheme';
+import { createTheme, ThemeProvider as MUIThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 
-type ThemeContextType = {
-  toggleTheme: () => void;
-  mode: 'light' | 'dark';
-};
+const theme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#00e5ff', // Vibrant cyan/teal
+    },
+    secondary: {
+      main: '#651fff', // Deep purple
+    },
+    background: {
+      default: '#0a0a0a',
+      paper: '#121212',
+    },
+  },
+  typography: {
+    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+    button: {
+      textTransform: 'none',
+      fontWeight: 600,
+    },
+  },
+  shape: {
+    borderRadius: 8,
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          padding: '10px 24px',
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiOutlinedInput-root': {
+            '& fieldset': {
+              borderColor: 'rgba(255, 255, 255, 0.23)',
+            },
+          },
+        },
+      },
+    },
+  },
+});
 
-const ThemeContext = createContext<ThemeContextType>({} as ThemeContextType);
-
-export const useThemeContext = () => useContext(ThemeContext);
-
-export default function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [mode, setMode] = useState<'light' | 'dark'>('dark');
-
-  const toggleTheme = () => {
-    setMode((prev) => (prev === 'light' ? 'dark' : 'light'));
-  };
-
-  const theme = useMemo(() => (mode === 'light' ? lightTheme : darkTheme), [mode]);
-
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeContext.Provider value={{ toggleTheme, mode }}>
-      <MUIThemeProvider theme={theme}>
-        <CssBaseline />
-        {children}
-      </MUIThemeProvider>
-    </ThemeContext.Provider>
+    <MUIThemeProvider theme={theme}>
+      <CssBaseline />
+      {children}
+    </MUIThemeProvider>
   );
 }

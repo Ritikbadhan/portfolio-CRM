@@ -1,23 +1,25 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
-import LoadingComponent from '../ui/LoadingComponent';
+import { useEffect } from 'react';
+import { RootState } from '../../store';
 
 export default function PublicRoute({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const [isChecking, setIsChecking] = useState(true);
+  const { isAuthenticated, isInitialized } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
-    // Redirect away if already logged in (e.g. for login pages)
-    const hasToken = false; // localStorage.getItem('token')
-    if (hasToken) {
-      router.push('/dashboard');
-    } else {
-      setIsChecking(false);
+    if (isInitialized && isAuthenticated) {
+      // If user is already logged in, redirect away from public routes (like login/register) to dashboard
+      router.push('/dashboard'); // or wherever the main app is
     }
-  }, [router]);
+  }, [isInitialized, isAuthenticated, router]);
 
-  if (isChecking) return <LoadingComponent />;
+  if (!isInitialized || isAuthenticated) {
+    // Show nothing while redirecting
+    return null;
+  }
+
   return <>{children}</>;
 }
