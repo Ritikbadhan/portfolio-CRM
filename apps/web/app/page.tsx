@@ -19,7 +19,7 @@ export default function Home() {
         The Next.js 14 App Router UI is successfully running!
       </Typography>
       <Button variant="contained" color="primary" sx={{ mt: 3 }}>
-        Get Started
+        Get Started  
       </Button>
     </Box>
   );
