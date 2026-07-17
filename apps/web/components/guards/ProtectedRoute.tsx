@@ -6,18 +6,55 @@ import { useEffect } from 'react';
 import { RootState } from '../../store';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
+import { UserRole, Permission } from '@portfolio/types';
+import { usePermissions } from '../../hooks/usePermissions';
 
-export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+  allowedRoles?: UserRole[];
+  allowedPermissions?: Permission[];
+}
+
+export default function ProtectedRoute({
+  children,
+  allowedRoles,
+  allowedPermissions,
+}: ProtectedRouteProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { isAuthenticated, isInitialized } = useSelector((state: RootState) => state.auth);
+  const { checkRole, checkPermission } = usePermissions();
 
   useEffect(() => {
     if (isInitialized && !isAuthenticated) {
-      // Redirect to login, optionally passing the return url
       router.push(`/login?returnUrl=${encodeURIComponent(pathname)}`);
+      return;
     }
-  }, [isInitialized, isAuthenticated, router, pathname]);
+
+    if (isInitialized && isAuthenticated) {
+      if (allowedRoles && !checkRole(allowedRoles)) {
+        router.push('/unauthorized');
+        return;
+      }
+
+      if (allowedPermissions) {
+        const hasAllPerms = allowedPermissions.every((p) => checkPermission(p));
+        if (!hasAllPerms) {
+          router.push('/unauthorized');
+          return;
+        }
+      }
+    }
+  }, [
+    isInitialized,
+    isAuthenticated,
+    router,
+    pathname,
+    allowedRoles,
+    allowedPermissions,
+    checkRole,
+    checkPermission,
+  ]);
 
   if (!isInitialized || !isAuthenticated) {
     return (
@@ -34,6 +71,10 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
       </Box>
     );
   }
+
+  // Double check during render
+  if (allowedRoles && !checkRole(allowedRoles)) return null;
+  if (allowedPermissions && !allowedPermissions.every((p) => checkPermission(p))) return null;
 
   return <>{children}</>;
 }

@@ -10,6 +10,8 @@ import xss from 'xss-clean';
 import crypto from 'crypto';
 import { errorHandler, notFoundHandler } from './middlewares/errorHandler';
 import healthRoutes from './routes/v1/health.route';
+import authRoutes from './routes/v1/auth.route';
+import adminRoutes from './routes/v1/admin.route';
 
 const app = express();
 
@@ -43,11 +45,10 @@ app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser());
 
-import authRoutes from './routes/v1/auth.route';
-
 // Routes
 app.use('/api/v1/health', healthRoutes);
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/admin', adminRoutes);
 
 // Catch 404
 app.use('*', notFoundHandler);
