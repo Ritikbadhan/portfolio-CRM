@@ -10,6 +10,7 @@ export enum AuditAction {
   PASSWORD_CHANGED = 'PASSWORD_CHANGED',
   PROFILE_UPDATED = 'PROFILE_UPDATED',
   USER_REGISTERED = 'USER_REGISTERED',
+  SETTINGS_UPDATED = 'SETTINGS_UPDATED',
 }
 
 export interface IAuditLog extends Document {

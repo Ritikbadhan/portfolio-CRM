@@ -12,6 +12,7 @@ import { errorHandler, notFoundHandler } from './middlewares/errorHandler';
 import healthRoutes from './routes/v1/health.route';
 import authRoutes from './routes/v1/auth.route';
 import adminRoutes from './routes/v1/admin.route';
+import settingsRoutes from './routes/v1/settings.route';
 
 const app = express();
 
@@ -49,6 +50,7 @@ app.use(cookieParser());
 app.use('/api/v1/health', healthRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/admin', adminRoutes);
+app.use('/api/v1/settings', settingsRoutes);
 
 // Catch 404
 app.use('*', notFoundHandler);
